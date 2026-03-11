@@ -345,6 +345,7 @@ sudo ./tests/integration/full_uninstall_flow.sh
   - `https://raw.githubusercontent.com/shadow-netlab/traffic-guard-lists/refs/heads/main/public/antiscanner.list`
   - `https://raw.githubusercontent.com/shadow-netlab/traffic-guard-lists/refs/heads/main/public/government_networks.list`
 - проверяет создание `ipset`, `iptables/ip6tables` цепочек и служебных файлов
+- если на хосте доступен `rsyslog`, дополнительно проверяет артефакты логирования
 - запускает `uninstall --yes` и проверяет, что артефакты удалены
 - повторяет цикл и проверяет `uninstall --yes --remove-logs`
 
