@@ -291,22 +291,38 @@ func (s *IptablesService) saveWithUFW() error {
 	}
 
 	// Добавляем наши правила в before.rules (внутри существующей секции *filter)
-	// Включаем правила с ipset для LOG и DROP
+	// Генерируем правила используя RuleBuilder
+	establishedRuleV4 := strings.Join(NewRuleBuilder().
+		MatchConntrack("ESTABLISHED", "RELATED").
+		Jump(TargetReturn).
+		Build(), " ")
+
 	logRuleV4 := ""
 	if s.enableLogging {
-		logRuleV4 = fmt.Sprintf("-A %s -m set --match-set %s src -m limit --limit 10/min --limit-burst 5 -j LOG --log-prefix \"ANTISCAN-v4: \" --log-level 4\n", chainName, ipsetV4Name)
+		logRuleV4 = strings.Join(NewRuleBuilder().
+			MatchSet(ipsetV4Name, "src").
+			MatchLimit("10/min", "5").
+			Jump(TargetLog).
+			LogPrefix("ANTISCAN-v4: ").
+			LogLevel("4").
+			Build(), " ") + "\n"
 	}
+
+	dropRuleV4 := strings.Join(NewRuleBuilder().
+		MatchSet(ipsetV4Name, "src").
+		Jump(TargetDrop).
+		Build(), " ")
 
 	rulesV4 := fmt.Sprintf(`
 # SCANNERS-BLOCK chain - managed by antiscan
 # DO NOT EDIT THIS SECTION MANUALLY
 :%s - [0:0]
 -A ufw-before-input -j %s
--A %s -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN
-%s-A %s -m set --match-set %s src -j DROP
+-A %s %s
+%s-A %s %s
 # END SCANNERS-BLOCK
 
-`, chainName, chainName, chainName, logRuleV4, chainName, ipsetV4Name)
+`, chainName, chainName, chainName, establishedRuleV4, logRuleV4, chainName, dropRuleV4)
 
 	// Вставляем перед последним COMMIT в конце *filter секции
 	lastCommit := strings.LastIndex(contentV4Str, "COMMIT\n")
@@ -330,21 +346,38 @@ func (s *IptablesService) saveWithUFW() error {
 			contentV6Str = s.removeManagedBlock(contentV6Str, markerV6)
 		}
 
+		// Генерируем правила используя RuleBuilder
+		establishedRuleV6 := strings.Join(NewRuleBuilder().
+			MatchConntrack("ESTABLISHED", "RELATED").
+			Jump(TargetReturn).
+			Build(), " ")
+
 		logRuleV6 := ""
 		if s.enableLogging {
-			logRuleV6 = fmt.Sprintf("-A %s -m set --match-set %s src -m limit --limit 10/min --limit-burst 5 -j LOG --log-prefix \"ANTISCAN-v6: \" --log-level 4\n", chainName, ipsetV6Name)
+			logRuleV6 = strings.Join(NewRuleBuilder().
+				MatchSet(ipsetV6Name, "src").
+				MatchLimit("10/min", "5").
+				Jump(TargetLog).
+				LogPrefix("ANTISCAN-v6: ").
+				LogLevel("4").
+				Build(), " ") + "\n"
 		}
+
+		dropRuleV6 := strings.Join(NewRuleBuilder().
+			MatchSet(ipsetV6Name, "src").
+			Jump(TargetDrop).
+			Build(), " ")
 
 		rulesV6 := fmt.Sprintf(`
 # SCANNERS-BLOCK chain - managed by antiscan
 # DO NOT EDIT THIS SECTION MANUALLY
 :%s - [0:0]
 -A ufw6-before-input -j %s
--A %s -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN
-%s-A %s -m set --match-set %s src -j DROP
+-A %s %s
+%s-A %s %s
 # END SCANNERS-BLOCK
 
-`, chainName, chainName, chainName, logRuleV6, chainName, ipsetV6Name)
+`, chainName, chainName, chainName, establishedRuleV6, logRuleV6, chainName, dropRuleV6)
 
 		lastCommit := strings.LastIndex(contentV6Str, "COMMIT\n")
 		if lastCommit == -1 {
