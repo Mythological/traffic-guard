@@ -331,6 +331,31 @@ sudo traffic-guard uninstall --yes
 sudo traffic-guard uninstall --yes --remove-logs
 ```
 
+### Интеграционный тест full -> uninstall
+
+Для проверки сценария на чистой Linux VM есть отдельный интеграционный скрипт:
+
+```bash
+sudo ./tests/integration/full_uninstall_flow.sh
+```
+
+Что делает сценарий:
+
+- запускает `full` с реальными публичными списками:
+  - `https://raw.githubusercontent.com/shadow-netlab/traffic-guard-lists/refs/heads/main/public/antiscanner.list`
+  - `https://raw.githubusercontent.com/shadow-netlab/traffic-guard-lists/refs/heads/main/public/government_networks.list`
+- проверяет создание `ipset`, `iptables/ip6tables` цепочек и служебных файлов
+- запускает `uninstall --yes` и проверяет, что артефакты удалены
+- повторяет цикл и проверяет `uninstall --yes --remove-logs`
+
+Требования:
+
+- Linux
+- root права
+- установленный `systemd`
+- доступ в интернет к `raw.githubusercontent.com`
+- запуск только на изолированной тестовой VM (не production)
+
 ## Логирование
 
 ### Конфигурация
