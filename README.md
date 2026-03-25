@@ -2,6 +2,10 @@
 
 Утилита для блокировки сканеров портов через iptables и ipset с поддержкой логирования и агрегации статистики.
 
+```bash
+-u https://raw.githubusercontent.com/tolkonepiu/ru-ipranges/70eddc619e3bddad2b30444acc72efa56d91c5b5/vk.com/ipv4.txt
+```
+
 ## Содержание
 
 - [О проекте](#о-проекте)
