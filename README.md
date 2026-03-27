@@ -4,6 +4,7 @@
 
 ```bash
 -u https://raw.githubusercontent.com/tolkonepiu/ru-ipranges/70eddc619e3bddad2b30444acc72efa56d91c5b5/vk.com/ipv4.txt
+-u https://raw.githubusercontent.com/tread-lightly/CyberOK_Skipa_ips/48cdac9c3ed79717426d387dc3cdab5684eedab9/lists/skipa_cidr.txt
 ```
 
 ## Содержание
