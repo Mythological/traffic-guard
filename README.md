@@ -8,7 +8,7 @@ traffic-guard full \
 -u https://raw.githubusercontent.com/shadow-netlab/traffic-guard-lists/refs/heads/main/public/antiscanner.list \
 -u https://raw.githubusercontent.com/tolkonepiu/ru-ipranges/70eddc619e3bddad2b30444acc72efa56d91c5b5/vk.com/ipv4.txt \
 -u https://raw.githubusercontent.com/tread-lightly/CyberOK_Skipa_ips/48cdac9c3ed79717426d387dc3cdab5684eedab9/lists/skipa_cidr.txt \
--u https://github.com/C24Be/AS_Network_List/blob/main/blacklists/blacklist-v4.txt
+-u https://raw.githubusercontent.com/C24Be/AS_Network_List/refs/heads/main/blacklists/blacklist-v4.txt
 ```
 
 ## Содержание
